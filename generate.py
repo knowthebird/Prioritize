@@ -4,7 +4,7 @@ Module containing functions to generate prioritized permutations.
 
 from collections import Counter
 from collections.abc import Generator
-from itertools import combinations_with_replacement, combinations
+from itertools import combinations_with_replacement, combinations, product
 from math import floor
 from sympy.utilities.iterables import multiset_permutations
 
@@ -59,34 +59,11 @@ def get_products(priorities:list,
         Returns a generator of strings.
     """
 
-    # Cleaning Input
     priorities = clean_input(priorities, max_length)
 
-    # Finding Possible Combinations with given elements length
-    tracker = [[count, len(item)] for count, item in enumerate(priorities)]
-    shortest_priority_length = min([item[1] for item in tracker])
-
-    max_replacements = floor(max_length/shortest_priority_length)
-
-    unique_combos = []
-    for replacements in range(max_replacements+1):
-        for combo in combinations_with_replacement(tracker, replacements):
-            combo_length = sum([item[1] for item in combo])
-            if min_length <= combo_length <= max_length:
-                unique_combos += [combo]
-
-    # Sorting Priorities
-    piority_combos = sort_priorities(priorities, unique_combos)
-
-    # Generating Output
-    for combo in piority_combos:
-        for permutation in multiset_permutations(combo):
-            final_str = ""
-            for inner_index in permutation:
-                final_str += str(priorities[inner_index])
-
-            if is_first_occurance(final_str, priorities, permutation):
-                yield final_str
+    for combination in create_combinations(priorities, min_length, max_length):
+        for permutation in create_permutations(combination, priorities):
+            yield permutation
 
 
 def clean_input(orig_priorities:list, max_length:int) -> list:
@@ -163,10 +140,7 @@ def is_made_of_substrings(main_string:str, sub_strings:list) -> bool:
 
     return False
 
-
-def sort_priorities(priorities:list, unique_combos:list) -> list:
-    #TODO: This functions is tooo loong, break it up...
-
+def create_combinations(priorities:list, min_length:int, max_length:int):
     new_list = []
     all_indexes = list(range(len(priorities)))
 
@@ -187,6 +161,7 @@ def sort_priorities(priorities:list, unique_combos:list) -> list:
     while k_list:
         top_items_values = []
         for item in top_items:
+            print(".")
             temp_val = 0
             str_val = "0." + ''.join([str(elem) for elem in item])
             temp_val = float(str_val)
@@ -195,27 +170,34 @@ def sort_priorities(priorities:list, unique_combos:list) -> list:
         min_index = top_items_values.index(min(top_items_values))
         if isinstance(k_list[min_index][0],list):
             included_indexes.append(k_list[min_index][0].copy())
+            current_indexes = k_list[min_index][0].copy()
         else:
+            current_indexes = k_list[min_index][0]
             included_indexes.append(k_list[min_index][0])
 
         k_list[min_index].pop(0)
         k_list = list(filter(None, k_list))
         top_items = [item[0] for item in k_list]
 
-    # This next section adds the combinations (which were possible with the length contstrains)
-    # to a list the in order of the priorities we set above
-    for thing in included_indexes:
-        temp_indexes = set(thing)
-        excluded_indexes = set(all_indexes)-temp_indexes
+        shortest_priority_length = min([len(priorities[index]) for index in current_indexes])
+        max_replacements = floor(max_length/shortest_priority_length)
 
-        for item in unique_combos:
-            combo_indexes = [val[0] for val in item]
-            if all(x in combo_indexes for x in temp_indexes) and \
-               not any(y in combo_indexes for y in excluded_indexes):
-                new_list += [combo_indexes]
+        for replacements in range(max_replacements+1):
+            temp_combos = [item for item in combinations_with_replacement(current_indexes,replacements)]
+            for combo in temp_combos:
+                if all(x in combo for x in current_indexes):
+                    combo_length = sum([len(priorities[index]) for index in combo])
+                    if min_length <= combo_length <= max_length:
+                        yield list(combo)
 
-    return new_list
+def create_permutations(combination:list, priorities:list):
+    for permutation in multiset_permutations(combination):
+        final_str = ""
+        for inner_index in permutation:
+            final_str += str(priorities[inner_index])
 
+        if is_first_occurance(final_str, priorities, permutation):
+            yield final_str
 
 def is_first_occurance(main_string:str, sub_strings:list, \
                        current_permutation:list) -> bool:
