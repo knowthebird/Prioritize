@@ -1,10 +1,11 @@
 """
-File for running tests and general debugging
+Space for running tests and general debugging
 """
-import generate
-from collections import Counter
+
+import prioritize
 
 # may be useful later....
+# from collections import Counter
 # import string
 #
 # SpecialCharachters = string.punctuation
@@ -13,8 +14,8 @@ from collections import Counter
 # WhiteSpace = string.whitespace
 
 priorities = ["abcd", "abc", "abcd"]
-max_length = 3
-returned_priorities = generate.clean_input(priorities,max_length)
+MAX_LENGTH = 3
+returned_priorities = prioritize.clean_input(priorities,MAX_LENGTH)
 expected_priorities = []
 if returned_priorities == expected_priorities:
     print("Duplicate Priorities: Pass")
@@ -22,7 +23,7 @@ else:
     print("Duplicate Priorities: FAILED")
 
 priorities = ["abcd", "abc", "dddd", "ab"]
-returned_priorities = generate.clean_input(priorities,max_length)
+returned_priorities = prioritize.clean_input(priorities,MAX_LENGTH)
 expected_priorities = ["abc", "ab"]
 if returned_priorities == expected_priorities:
     print("Clean Length:         Pass")
@@ -30,7 +31,7 @@ else:
     print("Clean Length:         FAILED")
 
 priorities = ["ab", "c", "abc", "a", "bc", "Ab"]
-returned_priorities = generate.clean_input(priorities,max_length)
+returned_priorities = prioritize.clean_input(priorities,MAX_LENGTH)
 expected_priorities = ["ab", "c", "a", "bc", "Ab"]
 if returned_priorities == expected_priorities:
     print("Remove Redundant:     Pass")
@@ -38,27 +39,36 @@ else:
     print("Remove Redundant:     FAILED")
 
 priorities = ["a", "b","c"]
-min = max = 1
-results = [result for result in generate.get_products(priorities,min,max)]
+MIN_LENGTH = MAX_LENGTH = 1
+results = list(prioritize.prioritized_permutations(priorities,MIN_LENGTH,MAX_LENGTH))
 if results == priorities:
     print("Simple Gen:           Pass")
 else:
     print("Simple Gen:           FAILED")
 
+priorities = list(range(0,10))
+MIN_LENGTH = 1
+MAX_LENGTH = 3
+results = list(prioritize.prioritized_permutations(priorities,MIN_LENGTH,MAX_LENGTH))
+if len(results) == 1110:
+    print("Results Count:        Pass")
+else:
+    print("Results Count:        FAILED")
+
 priorities = ["a", "b", "cdef"]
-min = 2
-max = 3
-results = [result for result in generate.get_products(priorities,min,max)]
+MIN_LENGTH = 2
+MAX_LENGTH = 3
+results = list(prioritize.prioritized_permutations(priorities,MIN_LENGTH,MAX_LENGTH))
 expected_results = ["aa","aaa","ab","ba","aab","aba",
                     "baa","abb","bab","bba","bb","bbb"]
 if results == expected_results:
-    print("Result Lengths:       Pass")
+    print("Min-Max Lengths:      Pass")
 else:
-    print("Result Lengths:       FAILED")
+    print("Min-Max Lengths:      FAILED")
 
 priorities = ["1", "2","3","4"]
-min = 1
-max = 4
+MIN_LENGTH = 1
+MAX_LENGTH = 4
 expected_results = ["1","11","111","1111","12","21","112","121","211","122",
                     "212","221","1112","1121","1211","2111","1122","1212",
                     "1221","2112","2121","2211","1222","2122","2212","2221",
@@ -100,15 +110,15 @@ expected_results = ["1","11","111","1111","12","21","112","121","211","122",
                     "344","434","443","3334","3343","3433","4333","3344","3434",
                     "3443","4334","4343","4433","3444","4344","4434","4443","4",
                     "44","444","4444"]
-results = [result for result in generate.get_products(priorities,min,max)]
+results = list(prioritize.prioritized_permutations(priorities,MIN_LENGTH,MAX_LENGTH))
 if results == expected_results:
     print("Results Order:        Pass")
 else:
     print("Results Order:        FAILED")
 
 priorities = ["ab", "a","b"]
-min = 1
-max = 5
+MIN_LENGTH = 1
+MAX_LENGTH = 5
 expected_results = ["ab","abab","aba","aab","ababa","abaab","aabab","abaa",
                     "aaba","aaab","abaaa","aabaa","aaaba","aaaab","abba","aabb",
                     "baba","baab","abbaa","aabba","aaabb","babaa","baaba",
@@ -117,14 +127,43 @@ expected_results = ["ab","abab","aba","aab","ababa","abaab","aabab","abaa",
                     "abbbb","babbb","bbabb","bbbab","a","aa","aaa","aaaa",
                     "aaaaa","ba","baa","bba","baaa","bbaa","bbba","baaaa",
                     "bbaaa","bbbaa","bbbba","b","bb","bbb","bbbb","bbbbb"]
-results = [result for result in generate.get_products(priorities,min,max)]
-if results == expected_results:
+results = list(prioritize.prioritized_permutations(priorities,MIN_LENGTH,MAX_LENGTH))
+if results == expected_results and len(results) == len(set(results)):
     print("No Duplicates:        Pass")
 else:
     print("No Duplicates:        FAILED")
 
 
-# for result in results:
+
+# known_previos_passwords = ["FlyFast72","Fly","Fast", "72", "8334"]
+# data_of_birth = ["02","2","26","1972","72"]
+# address = ["983", "Thomas", "Lane", "Winchester", "Virginia", "20313"]
+# phone = ["703","235","5483"]
+# things_they_like = ["shameless", "peaky", "blinders"]
+# common_passwords = ["password","admin", "root", "letmein"]
+# years = list(range(2022,1950,-1))
+# dates = years
+# months = list(range(12,0,-1))
+# dates.extend(list(x for x in months if x not in dates))
+# days = list(range(31,0,-1))
+# dates.extend(list(x for x in days if x not in dates))
+#
+# priorities = []
+# priorities.extend(list(x for x in known_previos_passwords if x not in priorities))
+# priorities.extend(list(x for x in data_of_birth if x not in priorities))
+# priorities.extend(list(x for x in address if x not in priorities))
+# priorities.extend(list(x for x in phone if x not in priorities))
+# priorities.extend(list(x for x in things_they_like if x not in priorities))
+# priorities.extend(list(x for x in common_passwords if x not in priorities))
+# priorities.extend(list(x for x in dates if x not in priorities))
+# priorities.extend(list(x for x in string.printable if x not in priorities))
+#
+# MIN_LENGTH = 8
+# MAX_LENGTH = 8
+# for result in prioritize.prioritized_permutations(priorities,MIN_LENGTH,MAX_LENGTH):
+#     print(result)
+
+# for result in results:"
 #     print(result)
 # print("Total words generated: ")
 # print(len(results))
@@ -134,3 +173,12 @@ else:
 # print([item for item, count in Counter(results).items() if count > 1])
 # print("Number of times the words were produced:")
 # print([count for item, count in Counter(results).items() if count > 1])
+
+
+# Holding on to old code....
+# another method to check for first occurances faster, but may miss
+# occurances if (the max string length) >= 2 * the length of priority/ies
+# which can be formed by lower priorities.
+# for i in range(min(current_permutation)):
+#     if main_string.find(sub_strings[i]) != -1:
+#         return False
