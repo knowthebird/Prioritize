@@ -1,5 +1,5 @@
 # Prioritize
-A module with functions to generate permutations in order of a given list of priorities.
+A module using generator functions to yield permutations in order of a given list of priorities.
 
 ## Usage
 ```python
@@ -26,24 +26,20 @@ string containing lower priorities. Permutations for a given
 combination are returned with the highest priorities occuring in the
 string first. Combinations with n replacements of equal sets of priorities
 are returned shortest to longest (for the final resulting string length).
+**TODO:** Need to find out what that kind of ordering is called...
 
 Duplicate values may be generated but will not be returned.
 Duplicates are only generated when a priority can be formed from a
 combination of one or more lower priorities.
-
-**TODO:** Make the algorithm check if duplicates are possible before checking for them
 
 Duplicates are prevented from being returned by determining what the
 highest priorities are the current string could be made from and
 checking if the priorities used to generate the current string match.
 This has the benefit of not requiring a recording of which strings have
 already been generated.
+**TODO:** Make the algorithm check if duplicates are possible before checking for them
 
-**TODO:** Need to find out what that kind of ordering is called...
-
-The originally intended application was generating strings for password
-crackers, such that a complete word list did not need to be generated,
-stored, and sorted in order to optimize it.
+The original intended application was to generate a stream of prioritized strings for password crackers. This means when testing every possible variant of a password, a complete word list does not need to be generated, stored, and sorted in order to optimize which passwords are tested first.  The function can immediatly begin streaming the strings to test, saving space and time.
 
 ## License
 This module is distributed under the [MIT License](/LICENSE).
