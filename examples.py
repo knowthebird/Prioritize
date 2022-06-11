@@ -40,7 +40,9 @@ def top_50_wordlists_priorities():
     min_length = 8
     max_length = 10
 
-    top_50 = itertools.islice(prioritize.prioritized_permutations(priorities,min_length,max_length), 50)
+    top_50 = itertools.islice(prioritize.prioritized_permutations(priorities,
+                                                                  min_length,
+                                                                  max_length),50)
     for result in top_50:
         print(result)
 
@@ -56,7 +58,9 @@ def date_priorities():
     min_length = 6
     max_length = 8
 
-    top_10 = itertools.islice(prioritize.prioritized_permutations(dates,min_length,max_length), 10)
+    top_10 = itertools.islice(prioritize.prioritized_permutations(dates,
+                                                                  min_length,
+                                                                  max_length),10)
     for result in top_10:
         print(result)
 
@@ -66,7 +70,9 @@ def punctuation_priorities():
     min_length = 1
     max_length = 3
 
-    top_10 = itertools.islice(prioritize.prioritized_permutations(priorities,min_length,max_length), 10)
+    top_10 = itertools.islice(prioritize.prioritized_permutations(priorities,
+                                                                  min_length,
+                                                                  max_length), 10)
     for result in top_10:
         print(result)
 

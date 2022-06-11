@@ -1,5 +1,8 @@
 # Prioritize
-A module which generates every possible string which could be composed from one or more substrings (called priorities), and yields those results optimized such that each permutation of the string containing a given list of priorities is yielded before any permutations containing lower priorities. Combinations  with replacements of the priorties are optimized such that combinations with less replacements are yielded before more replacements, so shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.
+A helper module which generates every possible string which could be composed from one or more substrings (called priorities), and yields those results optimized such that:
+  1. Each permutation of the string containing a set of priorities is yielded before any permutations containing lower priorities.
+  2. Permutations for given multiset of priorities is yielded in ... order.
+  3. Combinations  with replacements of the priorties are optimized such that combinations with less replacements are yielded before more replacements, so shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.
 
 ## Usage
 ```python

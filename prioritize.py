@@ -31,6 +31,7 @@ from math import floor
 from sympy.utilities.iterables import multiset_permutations
 
 
+
 def prioritized_permutations(priorities:list,
                              min_length:int = 4,
                              max_length:int = 7) -> Generator[str, None, None]:
@@ -66,8 +67,11 @@ def prioritized_permutations(priorities:list,
                                                max_length,
                                                current_indexes):
 
-            for permutation in create_permutations(priorities, combination):
-                yield permutation
+            for permutation in multiset_permutations(combination):
+                final_str = ''.join([priorities[i] for i in permutation])
+
+                if is_first_occurance(final_str, priorities, permutation):
+                    yield final_str
 
 
 def clean_input(orig_priorities:list, max_length:int) -> list:
@@ -154,18 +158,6 @@ def create_combinations(priorities:list, min_length:int, max_length:int,
                 if min_length <= combo_length <= max_length:
                     yield list(combo)
 
-def create_permutations(priorities:list,
-                        combination:list) -> Generator[str, None, None]:
-    """Generates multiset permutations of a given combination and returns the
-    resulting string if it is the first time the string has been made."""
-
-    for permutation in multiset_permutations(combination):
-        final_str = ""
-        for inner_index in permutation:
-            final_str += str(priorities[inner_index])
-
-        if is_first_occurance(final_str, priorities, permutation):
-            yield final_str
 
 def is_first_occurance(main_string:str, priorities:list,
                        current_permutation_indexes:list) -> bool:
