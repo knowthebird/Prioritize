@@ -4,6 +4,13 @@ A helper module which generates every possible string which could be composed fr
   2. Permutations for given multiset of priorities is yielded in ... order.
   3. Combinations  with replacements of the priorties are optimized such that combinations with less replacements are yielded before more replacements, so shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.
 
+## Installation
+Outside the standard library the module depends on sympy to generate multiset permutations.
+```sh
+sudo apt-get install python3-pip
+sudo pip3 install sympy
+```
+
 ## Usage
 ```python
 from prioritize import prioritized_permutations
@@ -15,7 +22,7 @@ for result in prioritized_permutations(priorities,MIN_STRING_LENGTH,MAX_STRING_L
     print(result)
 ```
 
-See [testing_scratch_pad.py](/testing_scratch_pad.py) for other usage examples.
+See [examples.py](/examples.py) for other usage examples.
 
 ## Documentation and Resources
 Generates strings for each multiset permutation for each possible combination (with replacement, that would result in a string of length within the min and max length specified) of a given set of priorities, in order of their priority. Order of priority is determined by the order of the priorities provided. This order is similar to, but not the same as lexigraphical order. It is optimized such that any version of a string containing a given set of priorities will be yielded before a string containing lower priorities. Permutations for a given combination are returned with the highest priorities occuring in the
