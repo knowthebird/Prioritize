@@ -1,5 +1,5 @@
 # Prioritize
-A helper module for generating every possible string, with a range of lengths, from a set of substrings.  The order the strings are returned is determined by the order of substrings in the set. This allows the user to "prioritize" the return of strings which contain combinations of higher priority substrings. Duplicates are not returned, including cases where substrings are combinations of lower priority substrings.
+A helper module for generating every possible string, within a range of lengths, from a set of substrings.  The order the strings are returned is determined by the order of substrings in the set.  This allows the user to "prioritize" the return of strings which are multiset permutations of higher priority substrings. Duplicates are not returned, including cases where substrings are multiset permutations of lower priority substrings.
 
 It is most useful when you need to know the next highest priority in a list of every possible string, but to generate the entire list, store it, and then sort it would consume too much time or memory.  One example would be helping a password creacker to test every possible string in an order determined by priority, number of replacements, and order of substrings in the multiset each test password is formed from.
 
