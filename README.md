@@ -1,8 +1,7 @@
 # Prioritize
-A helper module which generates every possible string which could be composed from one or more substrings (called priorities), and yields those results optimized such that:
-  1. Each permutation of the string containing a set of priorities is yielded before any permutations containing lower priorities.
-  2. Permutations for given multiset of priorities is yielded in ... order.
-  3. Combinations  with replacements of the priorties are optimized such that combinations with less replacements are yielded before more replacements, so shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.
+A helper module for generating every possible string, with a range of lengths, from a set of substrings.  The order the strings are returned is determined by the order of substrings in the set. This allows the user to "prioritize" the return of strings which contain combinations of higher priority substrings. Duplicates are not returned, including cases where substrings are combinations of lower priority substrings.
+
+It is most useful when you need to know the next highest priority in a list of every possible string, but to generate the entire list, store it, and then sort it would consume too much time or memory.  One example would be helping a password creacker to test every possible string in an order determined by priority, number of replacements, and order of substrings in the multiset each test password is formed from.
 
 ## Installation
 Outside the standard library the module depends on sympy to generate multiset permutations.
@@ -25,6 +24,13 @@ for result in prioritized_permutations(priorities,MIN_STRING_LENGTH,MAX_STRING_L
 See [examples.py](/examples.py) for other usage examples.
 
 ## Documentation and Resources
+
+
+  1. Each permutation of the string containing a set of priorities is yielded before any permutations containing lower priorities.
+  2. Permutations for given multiset of priorities is yielded in ... order.
+  3. Combinations  with replacements of the priorties are optimized such that combinations with less replacements are yielded before more replacements, so shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.
+
+
 Generates strings for each multiset permutation for each possible combination (with replacement, that would result in a string of length within the min and max length specified) of a given set of priorities, in order of their priority. Order of priority is determined by the order of the priorities provided. This order is similar to, but not the same as lexigraphical order. It is optimized such that any version of a string containing a given set of priorities will be yielded before a string containing lower priorities. Permutations for a given combination are returned with the highest priorities occuring in the
 string first. Combinations with n replacements of equal sets of priorities are returned with n increasing.
 **TODO:** Need to find out what that kind of ordering is called...
