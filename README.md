@@ -24,17 +24,30 @@ for result in prioritized_permutations(priorities,MIN_STRING_LENGTH,MAX_STRING_L
 See [examples.py](/examples.py) for other usage examples.
 
 ## Documentation and Resources
-The module shall yield every string which can be made from the given set of substrings, per the following constraints:
-  1. The length of each string yielded will be greater than or equal to the minimum length specified, and less than or equal to the maximum length specified.
+The module shall yield every string which can be made from the given set of substrings, per the input length constraints [1]. The sequence of emitting a string is as follows:
+* The next unique combination of indexes for the substrings is emitted in lexicographic ordering from the input set of priorites. [2]
+* The next combination with replacements (allowing individual elements to be repeated n times) from the input combination is emitted as a multiset in lexicographic ordering according to the order of the input combination. [3]
+* The next unique permutation of the multiset is generated in lexicographic order
+* The string is emmited from joining the substrings according to input multiset permutation of substring indexes.
+* The first possible multiset permutation which could emit the input string is determined.
+* If the first possible multiset permutation which could emit the current string is the same multiset permutation used to generate the string, the string is returned, and otherwise ignored as a duplicate. [4]
 
-The module shall yield strings in an order which conforms to the following constraints:
-  1. Every permutation of a string (made from a multiset of substrings) is yielded before any string (made from a multiset of substrings) containing any substrings with a priority lower than the lowest priority substring of the string to yield.
-  2. Permutations for the same multiset are yielded placing strings with the highest priority substring closest to furthest the begining of the string.
-  3. Combinations with n replacements from equal sets of substrings are returned with n increasing. (Note: So shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.)
 
-Order of priority is determined by the order of the priorities provided. This order is similar to, but not the same as lexigraphical order.
+1. There is a cleaning function to first detect duplicates, and remove substrings which are too long or redundant prior to using this.  
+2. There is also a check for if final string length would exceed length constraints, in which case the next valid unique combination is emitted. The total possible unique combinations of a set of n substrings will be 2<sup>n</sup>-1, as we can ignore the case where no values are used.
+Where Combinations = {Combination<sub>0</sub>, Combination<sub>1</sub>, Combination<sub>...</sub>, Combination<sub>2<sup>n</sup>-1</sub>}, the indexes of substrings which are tested can be found using the following function: Combination<sub>i</sub> = f(i,n)
+```python
+def f(i, n):
+  if i == 0:
+      return [0]
+  elif i < 2**(n-1):
+      return [0]+[x+1 for x in f(i-1, n-1)]
+  else:
+      return [x+1 for x in f(i-2**(n-1), n-1)]
+```
+3. Every combination of n elements is tested before increasing n.  N is increased from 0 to the maximum times a substring could generate a valid string.  Final combinations are checked for valid string length before emitting to generate permutations.
+4. Duplicates are only generated when a substring can be formed from a combination of substrings with a higer index in the set (lower priority substrings). The method used catches these duplicates without needing to record which strings have already been generated. This could be further optimized by making the module check if duplicates are possible at different stages before requiring a check for them.
 
-Duplicate values may be generated but will not be returned. Duplicates are only generated when a substring can be formed from a combination of lower priority substrings. Duplicates are prevented from being returned by determining what the highest priorities are the current string could be made from and checking if the priorities used to generate the current string match. This has the benefit of not needing to record which strings have already been generated.  This could be further optimized by making the algorithm check if duplicates are possible before checking for them.
 
 ## License
 This module is distributed under the [MIT License](/LICENSE).
