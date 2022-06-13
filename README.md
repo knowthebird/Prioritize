@@ -1,8 +1,7 @@
 # Prioritize
-A helper module which generates every possible string which could be composed from one or more substrings (called priorities), and yields those results such that:
-  1. Each permutation of the string containing a set of priorities is yielded before any permutations containing lower priorities.
-  2. Permutations for given multiset of priorities is yielded in ... order.
-  3. Combinations  with replacements of the priorties are optimized such that combinations with less replacements are yielded before more replacements, so shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.
+A helper module for generating every possible string, within a range of lengths, from a set of substrings.  The order the strings are returned is determined by the order of substrings in the set.  This allows the user to "prioritize" the return of strings which are multiset permutations of higher priority substrings. Duplicates are not returned, including cases where substrings are multiset permutations of lower priority substrings.
+
+It is most useful when you need to know the next highest priority in a list of every possible string, but to generate the entire list, store it, and then sort it would consume too much time or memory.  One example would be helping a password creacker to test every possible string in an order determined by priority, number of replacements, and order of substrings in the multiset permutation that each test password is formed from.
 
 ## Installation
 Outside the standard library the module depends on sympy to generate multiset permutations.
@@ -25,16 +24,17 @@ for result in prioritized_permutations(priorities,MIN_STRING_LENGTH,MAX_STRING_L
 See [examples.py](/examples.py) for other usage examples.
 
 ## Documentation and Resources
-Generates strings for each multiset permutation for each possible combination (with replacement, that would result in a string of length within the min and max length specified) of a given set of priorities, in order of their priority. Order of priority is determined by the order of the priorities provided. This order is similar to, but not the same as lexigraphical order. It is optimized such that any version of a string containing a given set of priorities will be yielded before a string containing lower priorities. Permutations for a given combination are returned with the highest priorities occuring in the
-string first. Combinations with n replacements of equal sets of priorities are returned with n increasing.
-**TODO:** Need to find out what that kind of ordering is called...
+The module shall yield every string which can be made from the given set of substrings, per the following constraints:
+  1. The length of each string yielded will be greater than or equal to the minimum length specified, and less than or equal to the maximum length specified.
 
-Duplicate values may be generated but will not be returned. Duplicates are only generated when a priority can be formed from a combination of one or more lower priorities.
+The module shall yield strings in an order which conforms to the following constraints:
+  1. Every permutation of a string (made from a multiset of substrings) is yielded before any string (made from a multiset of substrings) containing any substrings with a priority lower than the lowest priority substring of the string to yield.
+  2. Permutations for the same multiset are yielded placing strings with the highest priority substring closest to furthest the begining of the string.
+  3. Combinations with n replacements from equal sets of substrings are returned with n increasing. (Note: So shorter strings closer matching the original priorities are considered higher priority than longer strings with multiple occuraces of one ore more priorities.)
 
-Duplicates are prevented from being returned by determining what the highest priorities are the current string could be made from and checking if the priorities used to generate the current string match. This has the benefit of not requiring a recording of which strings have already been generated.
-**TODO:** Make the algorithm check if duplicates are possible before checking for them
+Order of priority is determined by the order of the priorities provided. This order is similar to, but not the same as lexigraphical order.
 
-The original intended application was to generate a stream of prioritized strings for password crackers. This means when testing every possible variant of a password, a complete word list does not need to be generated, stored, and sorted in order to optimize which passwords are tested first.  The function can immediatly begin streaming the strings to test, saving space and time.
+Duplicate values may be generated but will not be returned. Duplicates are only generated when a substring can be formed from a combination of lower priority substrings. Duplicates are prevented from being returned by determining what the highest priorities are the current string could be made from and checking if the priorities used to generate the current string match. This has the benefit of not needing to record which strings have already been generated.  This could be further optimized by making the algorithm check if duplicates are possible before checking for them.
 
 ## License
 This module is distributed under the [MIT License](/LICENSE).
