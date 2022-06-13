@@ -59,7 +59,6 @@ def prioritized_permutations(priorities:list,
     priorities = clean_input(priorities, max_length)
 
     for current_indexes in order_of_top_priorties(priorities,
-                                                  min_length,
                                                   max_length):
 
         for combination in create_combinations(priorities,
@@ -123,7 +122,8 @@ def is_made_of_substrings(main_string:str, sub_strings:list) -> bool:
 
     return False
 
-def order_of_top_priorties(priorities:list, min_length:int, max_length:int,
+
+def order_of_top_priorties(priorities:list, max_length:int,
                            begin:int=0, starting_indexes:list=None
                            ) -> Generator[list, None, None]:
     """Generates the indexes of the priorities list to use later when generating
@@ -140,9 +140,9 @@ def order_of_top_priorties(priorities:list, min_length:int, max_length:int,
             combo_length = sum([len(priorities[index]) for index in current_indexes])
             if combo_length <= max_length:
                 yield current_indexes
-                yield from order_of_top_priorties(priorities, min_length,
-                                                  max_length, index+1,
-                                                  current_indexes)
+                yield from order_of_top_priorties(priorities, max_length,
+                                                  index+1, current_indexes)
+
 
 def create_combinations(priorities:list, min_length:int, max_length:int,
                         current_indexes:list) -> Generator[list, None, None]:

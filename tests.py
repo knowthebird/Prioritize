@@ -7,44 +7,72 @@ from datetime import datetime
 import prioritize
 
 
+def find_combo_at(i, n):
+    """Returns the ith top combination of priorities, given n priorities"""
+    if i == 0:
+        return [0]
+    elif i < 2**(n-1):
+        return [0]+[x+1 for x in find_combo_at(i-1, n-1)]
+    else:
+        return [x+1 for x in find_combo_at(i-2**(n-1), n-1)]
+
+
 def duplicate_priorities():
     priorities = ["abcd", "abc", "abcd"]
     max_length = 3
     returned_priorities = prioritize.clean_input(priorities,max_length)
     expected_priorities = []
     if returned_priorities == expected_priorities:
-        print("Duplicate Priorities: Pass")
+        print("Duplicate Priorities:    Pass")
     else:
-        print("Duplicate Priorities: FAILED")
+        print("Duplicate Priorities:    FAILED")
 
 def clean_length():
+
     priorities = ["abcd", "abc", "dddd", "ab"]
     max_length = 3
     returned_priorities = prioritize.clean_input(priorities,max_length)
     expected_priorities = ["abc", "ab"]
     if returned_priorities == expected_priorities:
-        print("Clean Length:         Pass")
+        print("Clean Length:            Pass")
     else:
-        print("Clean Length:         FAILED")
+        print("Clean Length:            FAILED")
 
 def remove_redundant():
-    priorities = ["ab", "c", "abc", "a", "bc", "Ab"]
-    max_length = 3
+    priorities = ["ab", "c", "d", "abc", "abcd", "bc", "Ab"]
+    max_length = 4
     returned_priorities = prioritize.clean_input(priorities,max_length)
-    expected_priorities = ["ab", "c", "a", "bc", "Ab"]
+    expected_priorities = ["ab", "c", "d", "bc", "Ab"]
     if returned_priorities == expected_priorities:
-        print("Remove Redundant:     Pass")
+        print("Remove Redundant:        Pass")
     else:
-        print("Remove Redundant:     FAILED")
+        print("Remove Redundant:        FAILED")
+
+def check_order_of_top_priorties():
+    priorities = [str(val) for val in range(11)]
+    min_length = 3
+    max_length = sum(len(priority) for priority in priorities)
+    results = list(prioritize.order_of_top_priorties(tuple(priorities),max_length))
+    n = len(priorities)
+    if len(results) == (2**n)-1:
+        print("Length of Top Priorties: Pass")
+    else:
+        print("Length of Top Priorties: FAILED")
+
+    if all([(results[i] == find_combo_at(i,n)) for i in range(len(results))]):
+        print("Order of Top Priorties:  Pass")
+    else:
+        print("Order of Top Priorties:  FAILED")
+    #print(results)
 
 def simple_gen():
     priorities = ["a", "b","c"]
     min_length = max_length = 1
     results = list(prioritize.prioritized_permutations(priorities,min_length,max_length))
     if results == priorities:
-        print("Simple Gen:           Pass")
+        print("Simple Gen:              Pass")
     else:
-        print("Simple Gen:           FAILED")
+        print("Simple Gen:              FAILED")
 
 def results_count():
     priorities = list(range(0,10))
@@ -52,9 +80,9 @@ def results_count():
     max_length = 3
     results = list(prioritize.prioritized_permutations(priorities,min_length,max_length))
     if len(results) == 1110:
-        print("Results Count:        Pass")
+        print("Results Count:           Pass")
     else:
-        print("Results Count:        FAILED")
+        print("Results Count:           FAILED")
 
 def results_order():
     priorities = ["a", "b", "cdef"]
@@ -64,9 +92,9 @@ def results_order():
     expected_results = ["aa","aaa","ab","ba","aab","aba",
                         "baa","abb","bab","bba","bb","bbb"]
     if results == expected_results:
-        print("Min-Max Lengths:      Pass")
+        print("Min-Max Lengths:         Pass")
     else:
-        print("Min-Max Lengths:      FAILED")
+        print("Min-Max Lengths:         FAILED")
 
     priorities = ["1", "2","3","4"]
     min_length = 1
@@ -114,9 +142,9 @@ def results_order():
                         "44","444","4444"]
     results = list(prioritize.prioritized_permutations(priorities,min_length,max_length))
     if results == expected_results:
-        print("Results Order:        Pass")
+        print("Results Order:           Pass")
     else:
-        print("Results Order:        FAILED")
+        print("Results Order:           FAILED")
 
 def no_duplicates():
     priorities = ["ab", "a","b"]
@@ -132,9 +160,9 @@ def no_duplicates():
                         "bbaaa","bbbaa","bbbba","b","bb","bbb","bbbb","bbbbb"]
     results = list(prioritize.prioritized_permutations(priorities,min_length,max_length))
     if results == expected_results and len(results) == len(set(results)):
-        print("No Duplicates:        Pass")
+        print("No Duplicates:           Pass")
     else:
-        print("No Duplicates:        FAILED")
+        print("No Duplicates:           FAILED")
         print("Total words generated: ")
         print(len(results))
         print("Total unique words generated")
@@ -151,12 +179,13 @@ def main():
     duplicate_priorities()
     clean_length()
     remove_redundant()
+    check_order_of_top_priorties()
     simple_gen()
     results_count()
     results_order()
     no_duplicates()
 
-    timeelapsed = datetime.now() - starttime
+    timeelapsed = (datetime.now() - starttime).total_seconds()
     print("Completed Test In: " + str(timeelapsed) + " seconds.")
 
 if __name__ == "__main__":
