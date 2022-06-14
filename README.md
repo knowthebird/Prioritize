@@ -14,12 +14,50 @@ sudo pip3 install sympy
 ```python
 from prioritize import prioritized_permutations
 
-priorities = ["1st priority", "2nd priority", "3rd", "..."]
-MIN_STRING_LENGTH = 4
-MAX_STRING_LENGTH = 12
+priorities = ["Top","Second","Last"]
+MIN_STRING_LENGTH = 1
+MAX_STRING_LENGTH = 13
 for result in prioritized_permutations(priorities,MIN_STRING_LENGTH,MAX_STRING_LENGTH):
     print(result)
 ```
+Will return:
+```
+Top
+TopTop
+TopTopTop
+TopTopTopTop
+TopSecond
+SecondTop
+TopTopSecond
+TopSecondTop
+SecondTopTop
+TopSecondLast
+TopLastSecond
+SecondTopLast
+SecondLastTop
+LastTopSecond
+LastSecondTop
+TopLast
+LastTop
+TopTopLast
+TopLastTop
+LastTopTop
+TopLastLast
+LastTopLast
+LastLastTop
+TopTopTopLast
+TopTopLastTop
+TopLastTopTop
+LastTopTopTop
+Second
+SecondSecond
+SecondLast
+LastSecond
+Last
+LastLast
+LastLastLast
+```
+
 
 See [examples.py](/examples.py) for other usage examples.
 
@@ -45,9 +83,71 @@ def f(i, n):
   else:
       return [x+1 for x in f(i-2**(n-1), n-1)]
 ```
-3. Every combination of n elements is tested before increasing n.  N is increased from 0 to the maximum times a substring could generate a valid string.  Final combinations are checked for valid string length before emitting to generate permutations.
+Example of the unique combinations to test generated with four priorities (which could all meet the length constraints).
+| i  | f(i,n) n = 4 |
+|----|--------------|
+| 1  | [0]          |
+| 2  | [0, 1]       |
+| 3  | [0, 1, 2]    |
+| 4  | [0, 1, 2, 3] |
+| 5  | [0, 1, 3]    |
+| 6  | [0, 2]       |
+| 7  | [0, 2, 3]    |
+| 8  | [0, 3]       |
+| 9  | [1]          |
+| 10 | [1, 2]       |
+| 11 | [1, 2, 3]    |
+| 12 | [1, 3]       |
+| 13 | [2]          |
+| 14 | [2, 3]       |
+| 15 | [3]          |
+
+3. Every combination of n elements is tested before increasing n.  N is increased from 1 to the maximum times a substring could generate a valid string (shorter strings are ranked higher/returned sooner).  Final combinations are checked for valid string length before emitting to generate permutations.
 4. Duplicates are only generated when a substring can be formed from a combination of substrings with a higer index in the set (lower priority substrings). The method used catches these duplicates without needing to record which strings have already been generated. This could be further optimized by making the module check if duplicates are possible at different stages before requiring a check for them.
 
+The results of the overall ordering ensures top priorities are test returned first.  Ordering the priorities in lexicographical order does not mean the results are in lexicographical order.  See below for an example of running the module with the priorities ["c","b","a"].
+
+| results for priorities | results for sorted priorities | sorted results for priorities |
+|------------------------|-------------------------------|-------------------------------|
+| c                      | a                             | a                             |
+| cc                     | aa                            | aa                            |
+| ccc                    | aaa                           | aaa                           |
+| cb                     | ab                            | aab                           |
+| bc                     | ba                            | aac                           |
+| ccb                    | aab                           | ab                            |
+| cbc                    | aba                           | aba                           |
+| bcc                    | baa                           | abb                           |
+| cbb                    | abb                           | abc                           |
+| bcb                    | bab                           | ac                            |
+| bbc                    | bba                           | aca                           |
+| cba                    | abc                           | acb                           |
+| cab                    | acb                           | acc                           |
+| bca                    | bac                           | b                             |
+| bac                    | bca                           | ba                            |
+| acb                    | cab                           | baa                           |
+| abc                    | cba                           | bab                           |
+| ca                     | ac                            | bac                           |
+| ac                     | ca                            | bb                            |
+| cca                    | aac                           | bba                           |
+| cac                    | aca                           | bbb                           |
+| acc                    | caa                           | bbc                           |
+| caa                    | acc                           | bc                            |
+| aca                    | cac                           | bca                           |
+| aac                    | cca                           | bcb                           |
+| b                      | b                             | bcc                           |
+| bb                     | bb                            | c                             |
+| bbb                    | bbb                           | ca                            |
+| ba                     | bc                            | caa                           |
+| ab                     | cb                            | cab                           |
+| bba                    | bbc                           | cac                           |
+| bab                    | bcb                           | cb                            |
+| abb                    | cbb                           | cba                           |
+| baa                    | bcc                           | cbb                           |
+| aba                    | cbc                           | cbc                           |
+| aab                    | ccb                           | cc                            |
+| a                      | c                             | cca                           |
+| aa                     | cc                            | ccb                           |
+| aaa                    | ccc                           | ccc                           |
 
 ## License
 This module is distributed under the [MIT License](/LICENSE).
