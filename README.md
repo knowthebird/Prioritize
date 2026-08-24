@@ -25,7 +25,7 @@ This makes the module useful for large ordered search spaces where **early resul
 - **Priority-aware ordering:** the order of the input substrings influences when candidate families are explored.
 - **Bounded output lengths:** minimum and maximum string lengths constrain generation.
 - **Duplicate suppression:** duplicate output strings are avoided without retaining the complete generated result set.
-- **Incremental consumption:** callers can process, pause, or stop iteration without waiting for the entire candidate space to be generated.
+- **Incremental consumption:** iteration state is retained between calls, so callers can process results in batches and stop or resume without regenerating the full search space.
 - **Substring support:** priorities may be multi-character strings rather than individual characters.
 
 ## Example
@@ -129,6 +129,80 @@ This avoids maintaining a potentially massive in-memory set solely for duplicate
 ## Project Status
 
 This is a focused algorithmic utility rather than a full application or packaged service. The implementation dates from 2022 and is kept here primarily as a reusable demonstration of priority-ordered lazy combinatorial generation.
+
+## Reference Output and Ordering
+
+The following tables preserve two useful reference views from the original project documentation.
+
+### Priority-group enumeration
+
+For four priorities, the generator considers unique priority-index groups in this order before expanding them with replacements and permutations:
+
+| i | Priority indexes |
+| ---: | --- |
+| 1 | `[0]` |
+| 2 | `[0, 1]` |
+| 3 | `[0, 1, 2]` |
+| 4 | `[0, 1, 2, 3]` |
+| 5 | `[0, 1, 3]` |
+| 6 | `[0, 2]` |
+| 7 | `[0, 2, 3]` |
+| 8 | `[0, 3]` |
+| 9 | `[1]` |
+| 10 | `[1, 2]` |
+| 11 | `[1, 2, 3]` |
+| 12 | `[1, 3]` |
+| 13 | `[2]` |
+| 14 | `[2, 3]` |
+| 15 | `[3]` |
+
+### Priority ordering compared with lexical ordering
+
+For input priorities `["c", "b", "a"]`, the generator's order is intentionally different from either sorting the priorities first or lexically sorting the final strings:
+
+| Prioritized results | Results with sorted priorities | Lexically sorted results |
+| --- | --- | --- |
+| c | a | a |
+| cc | aa | aa |
+| ccc | aaa | aaa |
+| cb | ab | aab |
+| bc | ba | aac |
+| ccb | aab | ab |
+| cbc | aba | aba |
+| bcc | baa | abb |
+| cbb | abb | abc |
+| bcb | bab | ac |
+| bbc | bba | aca |
+| cba | abc | acb |
+| cab | acb | acc |
+| bca | bac | b |
+| bac | bca | ba |
+| acb | cab | baa |
+| abc | cba | bab |
+| ca | ac | bac |
+| ac | ca | bb |
+| cca | aac | bba |
+| cac | aca | bbb |
+| acc | caa | bbc |
+| caa | acc | bc |
+| aca | cac | bca |
+| aac | cca | bcb |
+| b | b | bcc |
+| bb | bb | c |
+| bbb | bbb | ca |
+| ba | bc | caa |
+| ab | cb | cab |
+| bba | bbc | cac |
+| bab | bcb | cb |
+| abb | cbb | cba |
+| baa | bcc | cbb |
+| aba | cbc | cbc |
+| aab | ccb | cc |
+| a | c | cca |
+| aa | cc | ccb |
+| aaa | ccc | ccc |
+
+These examples are not meant to prescribe one universal notion of priority; they make the implemented ordering concrete and easier to inspect.
 
 ## License
 
